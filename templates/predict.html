@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Weather Index Predictor - Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --primary-bg: #0d1117;
+            --secondary-bg: #161b22;
+            --card-bg: #21262d;
+            --border-color: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent-color: #58a6ff;
+            --accent-hover: #4493e6;
+            --success-color: #3fb950;
+            --warning-color: #d29922;
+            --danger-color: #f85149;
+            --gradient-primary: linear-gradient(135deg, #58a6ff 0%, #4493e6 100%);
+            --gradient-card: linear-gradient(135deg, #21262d 0%, #262c36 100%);
+            --glow-primary: 0 0 20px rgba(88, 166, 255, 0.3);
+            --glow-hover: 0 0 30px rgba(88, 166, 255, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 25%, rgba(88, 166, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(116, 97, 195, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .navbar {
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--text-primary) !important;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            text-shadow: var(--glow-hover);
+            transform: scale(1.05);
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            margin: 0 0.25rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+            background: rgba(88, 166, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 80%;
+        }
+
+        .container {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .form-container {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
+            opacity: 0.6;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4),
+                        0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-inner {
+            padding: 2.5rem;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            position: relative;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-control {
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-control:focus {
+            background: var(--secondary-bg);
+            border-color: var(--accent-color);
+            color: var(--text-primary);
+            box-shadow: var(--glow-primary);
+            outline: none;
+            transform: scale(1.02);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-control:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-control:focus + .input-icon {
+            color: var(--accent-color);
+        }
+
+        .btn-predict {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+        }
+
+        .btn-predict::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-hover);
+            background: linear-gradient(135deg, #4493e6 0%, #58a6ff 100%);
+        }
+
+        .btn-predict:hover::before {
+            left: 100%;
+        }
+
+        .btn-predict:active {
+            transform: translateY(-1px);
+        }
+
+        .result {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .result h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(63, 185, 80, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(88, 166, 255, 0.6); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-inner {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin-top: 1.5rem;
+                padding: 0 0.5rem;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">🔥 FWI Predictor</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">🏠 Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('predict_datapoint') }}">🔮 Predict</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="form-container animate__animated animate__fadeIn float-animation">
+                    <div class="form-inner">
+                        <h1 class="form-title">Fire Weather Index Prediction</h1>
+
+                        <form action="{{ url_for('predict_datapoint') }}" method="post" id="prediction-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="Temperature" placeholder="Temperature (°C)" required />
+                                        <div class="input-icon">🌡️</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="RH" placeholder="Relative Humidity (%)" required />
+                                        <div class="input-icon">💧</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="Ws" placeholder="Wind Speed (km/h)" required />
+                                        <div class="input-icon">💨</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="Rain" placeholder="Rain (mm)" required />
+                                        <div class="input-icon">🌧️</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="FFMC" placeholder="FFMC" required />
+                                        <div class="input-icon">🔥</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="DMC" placeholder="DMC" required />
+                                        <div class="input-icon">🌿</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" step="any" class="form-control" name="ISI" placeholder="ISI" required />
+                                        <div class="input-icon">⚡</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="Classes" placeholder="Classes" required />
+                                        <div class="input-icon">📊</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="Region" placeholder="Region" required />
+                                    <div class="input-icon">🗺️</div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-predict btn-block pulse-glow">
+                                🔮 Predict Fire Weather Index
+                            </button>
+                        </form>
+
+                        <div class="loading" id="loading">
+                            <div class="spinner"></div>
+                            <p>Analyzing fire weather conditions...</p>
+                        </div>
+
+                        {% if results %}
+                        <div class="result animate__animated animate__bounceIn">
+                            <h2>🔥 Fire Weather Index: {{ results }}</h2>
+                            <p style="color: var(--text-secondary); margin-top: 1rem;">
+                                Prediction completed successfully!
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Enhanced form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('prediction-form');
+            const loading = document.getElementById('loading');
+            const inputs = document.querySelectorAll('.form-control');
+            
+            // Add focus animations to inputs
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('animate__animated', 'animate__pulse');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('animate__animated', 'animate__pulse');
+                });
+                
+                // Add typing animation
+                input.addEventListener('input', function() {
+                    this.style.borderColor = 'var(--accent-color)';
+                    setTimeout(() => {
+                        this.style.borderColor = 'var(--border-color)';
+                    }, 300);
+                });
+            });
+            
+            // Form submission with loading animation
+            form.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('.btn-predict');
+                submitBtn.innerHTML = '🔄 Processing...';
+                submitBtn.style.background = 'var(--warning-color)';
+                loading.style.display = 'block';
+                
+                // Add loading animation to form container
+                document.querySelector('.form-container').classList.add('animate__animated', 'animate__pulse');
+            });
+            
+            // Smooth scroll for navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+            
+            // Add parallax effect to background
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.5;
+                document.body.style.transform = `translateY(${rate}px)`;
+            });
+            
+            // Add entrance animations with delay
+            const animatedElements = document.querySelectorAll('.form-group');
+            animatedElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+                element.classList.add('animate__animated', 'animate__fadeInUp');
+            });
+        });
+    </script>
+</body>
+</html>
