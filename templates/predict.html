@@ -494,13 +494,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <script>
-        // Enhanced form interactions
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('prediction-form');
             const loading = document.getElementById('loading');
             const inputs = document.querySelectorAll('.form-control');
             
-            // Add focus animations to inputs
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
                     this.parentElement.classList.add('animate__animated', 'animate__pulse');
@@ -510,7 +508,6 @@
                     this.parentElement.classList.remove('animate__animated', 'animate__pulse');
                 });
                 
-                // Add typing animation
                 input.addEventListener('input', function() {
                     this.style.borderColor = 'var(--accent-color)';
                     setTimeout(() => {
@@ -519,18 +516,15 @@
                 });
             });
             
-            // Form submission with loading animation
             form.addEventListener('submit', function(e) {
                 const submitBtn = this.querySelector('.btn-predict');
                 submitBtn.innerHTML = '🔄 Processing...';
                 submitBtn.style.background = 'var(--warning-color)';
                 loading.style.display = 'block';
                 
-                // Add loading animation to form container
                 document.querySelector('.form-container').classList.add('animate__animated', 'animate__pulse');
             });
             
-            // Smooth scroll for navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     this.style.transform = 'scale(0.95)';
@@ -540,14 +534,12 @@
                 });
             });
             
-            // Add parallax effect to background
             window.addEventListener('scroll', function() {
                 const scrolled = window.pageYOffset;
                 const rate = scrolled * -0.5;
                 document.body.style.transform = `translateY(${rate}px)`;
             });
             
-            // Add entrance animations with delay
             const animatedElements = document.querySelectorAll('.form-group');
             animatedElements.forEach((element, index) => {
                 element.style.animationDelay = `${index * 0.1}s`;
