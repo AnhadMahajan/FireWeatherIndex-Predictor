@@ -68,7 +68,7 @@ The dataset used in this project is the Algerian Forest Fires Dataset, which con
 
 ## Future Improvements
 
-- Input validation to ensure data quality.
+- Input validation to ensure data quality. 
 - More detailed error handling and user feedback.
 - Expanding the range of models for comparison.
 - Incorporating more features for improved accuracy.
