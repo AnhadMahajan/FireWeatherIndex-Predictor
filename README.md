@@ -1,4 +1,4 @@
-# Fire Weather Index (FWI) Predictor
+# Fire Weather Index (FWI) Predictor 
 
 This project is a web application built with Flask that predicts the Fire Weather Index (FWI) based on various environmental factors. It uses a Ridge Regression model trained on the Algerian Forest Fires Dataset.  
 
