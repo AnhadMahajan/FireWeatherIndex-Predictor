@@ -5,7 +5,7 @@ This project is a web application built with Flask that predicts the Fire Weathe
 
 ## Project Structure
 
-- `app.py`: The main Flask application file.
+- `app.py`: The main Flask application file. 
 - `Models/`: Contains the trained Ridge Regression model (`ridge.pkl`) and the StandardScaler (`scaler.pkl`) saved as pickle files.
 - `templates/`: Contains the HTML templates for the web application.
   - `index.html`: The homepage with a welcome message and a link to the prediction form.
